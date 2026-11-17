@@ -708,11 +708,15 @@
     };
 
     try {
-      await fetch('https://api.rd.services/platform/conversions?api_key=a7df9e25efe1a0a4ca79a8bfd9e4df21',{
+      const SB_URL='https://fcttncxbfwkwpzwsrmpn.supabase.co/rest/v1/leads_estudo_2026';
+      const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjdHRuY3hiZndrd3B6d3NybXBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0NDEzMTIsImV4cCI6MjA5NTAxNzMxMn0.W4aGArb5n2HXlnjHO4Wuxfvo1P9_rvX6CpAVdV-Tcrs';
+      const p=payload.payload;
+      const resp=await fetch(SB_URL,{
         method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify(payload)
+        headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'},
+        body:JSON.stringify({nome:p.name,empresa:p.company_name,cargo:p.job_title,email:p.email,telefone:p.personal_phone,cidade:p.city,estado:p.state,utm_source:utms.utm_source||null,utm_medium:utms.utm_medium||null,utm_campaign:utms.utm_campaign||null,utm_content:utms.utm_content||null,utm_term:utms.utm_term||null,page_url:location.href.split('?')[0]})
       });
+      if(!resp.ok) console.error('Falha ao registrar lead', resp.status);
     } catch(err) {
       // Continua mesmo em erro de rede/CORS
     }
