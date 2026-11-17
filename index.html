@@ -667,7 +667,21 @@
     if(!open) item.classList.add('open');
   }
 
+  function getUtms() {
+    const keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+    let saved={};
+    try { saved=JSON.parse(sessionStorage.getItem('cnt_utms')||'{}'); } catch(err) {}
+    const qs=new URLSearchParams(location.search);
+    const fromUrl={};
+    keys.forEach(k=>{ const v=qs.get(k); if(v) fromUrl[k]=v; });
+    const utms=Object.keys(fromUrl).length?fromUrl:saved;
+    try { sessionStorage.setItem('cnt_utms',JSON.stringify(utms)); } catch(err) {}
+    return utms;
+  }
+  getUtms();
+
   async function handleSubmit(e) {
+    const utms=getUtms();
     e.preventDefault();
     const btn=document.getElementById('submit-btn');
     const btnText=document.getElementById('btn-text');
@@ -685,8 +699,11 @@
         personal_phone:f.telefone.value.trim(),
         city:f.cidade.value.trim(),
         state:f.estado.value,
-        tags:['estudo-2026','contabilidade-pessoas'],
-        traffic_source:'landing-page-estudo-2026'
+        tags:['estudo-2026','contabilidade-pessoas'].concat(utms.utm_campaign?['utm-'+utms.utm_campaign]:[]),
+        traffic_source:utms.utm_source||'landing-page-estudo-2026',
+        traffic_medium:utms.utm_medium||'',
+        traffic_campaign:utms.utm_campaign||'',
+        traffic_value:utms.utm_content||''
       }
     };
 
